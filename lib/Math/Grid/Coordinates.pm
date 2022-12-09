@@ -26,6 +26,7 @@ has arrange => ( is => 'rw', isa => 'Seq', default => sub { 'h' } );
 around BUILDARGS => sub {
     my $orig  = shift;
     my $class = shift;
+    my $opts;
 
     if ( !ref $_[0] ) {
 	my %h;
@@ -34,22 +35,22 @@ around BUILDARGS => sub {
 	($h{arrange}) = (grep { /^[h,v]i/ } @_) || ('h');
 	$h{gutter} ||= 0;
 	$h{border} ||= 0;
-	return $class->$orig( \%h );
+	# return $class->$orig( \%h );
+	$opts = \%h;
     } else {
-	my $opts = shift;
-
-	$opts->{gutter_h} //= $opts->{gutter} // 0;
-	$opts->{gutter_v} //= $opts->{gutter} // $opts->{gutter_v} // 0;
-
-	$opts->{border_t} //= $opts->{border} // $opts->{gutter_v} // 0;
-	$opts->{border_b} //= $opts->{border_t} // $opts->{border} // $opts->{gutter_v} // 0;
-
-	$opts->{border_l} //= $opts->{border} // $opts->{gutter_h} // 0;
-	$opts->{border_r} //= $opts->{border_l};
-
-	my $obj = $class->$orig($opts);
-	return $obj;
+	$opts = shift;
     }
+    $opts->{gutter_h} //= $opts->{gutter} // 0;
+    $opts->{gutter_v} //= $opts->{gutter} // $opts->{gutter_v} // 0;
+
+    $opts->{border_t} //= $opts->{border} // $opts->{gutter_v} // 0;
+    $opts->{border_b} //= $opts->{border_t} // $opts->{border} // $opts->{gutter_v} // 0;
+
+    $opts->{border_l} //= $opts->{border} // $opts->{gutter_h} // 0;
+    $opts->{border_r} //= $opts->{border_l};
+
+    my $obj = $class->$orig($opts);
+    return $obj;
 };
 
 sub total_height {
@@ -123,7 +124,6 @@ sub guides {
 	push @guides, [ [ $p, 0 ], [ $p, $h ] ];
 	push @guides, [ [ $p + $iw, 0 ], [ $p + $iw, $h ] ];
     }
-    
     for (0..$self->grid_height-1) {
 	my $p = [ $self->position(0, $_) ]->[1];
 	push @guides, [ [ 0, $p ], [ $w, $p ] ];
@@ -138,7 +138,7 @@ sub calculate {
     my $avail_v = $self->page_height - ($self->border_t + $self->gutter_v * ($self->grid_height - 1) + $self->border_b);
     my $avail_h = $self->page_width  - ($self->border_l + $self->gutter_h * ($self->grid_width  - 1) + $self->border_r);
 
-    print $avail_h, $avail_v;
+    # print $avail_h, $avail_v;
 
     $self->item_width($avail_h / $self->grid_width);
     $self->item_height($avail_v / $self->grid_height);
