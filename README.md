@@ -10,7 +10,7 @@ Grid - create geometric grids
 
 # DESCRIPTION
 
-Grid creates an array of x-y positions for items of a given height and wdith arranged in a grid. This is used to create grid layouts on a page, or repeate items on a number of pages of the same size.
+Grid creates an array of x-y positions for items of a given height and width arranged in a grid. This is used to create grid layouts on a page, or repeate items on a number of pages of the same size.
 
 # REQUIRES
 
@@ -74,7 +74,7 @@ Returns the sequence of x-y grid item coordinates, with the top left item as ite
 
     $grid->positions();
 
-Returns the sequence of x-y grid coordinates, taking optional offsets. If two offsets are provided, the x-y position is offset accordingly, and if four are provided, it returns a boumding box.
+Returns the sequence of x-y grid coordinates.
 
 ## total\_height
 
@@ -88,8 +88,18 @@ The total height of the grid
 
 The total width of the grid
 
+## calculate
+
+    $grid->calculate();
+
+Calculates item width and height based on page size, borders, gutters and item count
+
+## guides
+
+    $grid->guides();
+
+Returns start and end coordinates of layout guides
+
 # To do
 
-- Allow for different vertical and horizontal gutters 
-- Allow for different top, bottom, left right borders
 - Allow for bottom or top start of grid
