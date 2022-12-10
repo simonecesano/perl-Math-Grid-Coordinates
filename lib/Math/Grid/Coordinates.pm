@@ -96,12 +96,6 @@ sub position {
 
 sub positions {
     my $self = shift;
-    # my ($x1, $y1, $x2, $y2) = @_;
-
-    # for ($x1, $y1) { $_ ||= 0 }; 
-
-    # my ($gw, $gh, $iw, $ih, $gt_h, $gt_v, $bl, $br, $bt, $bb) = map { $self->$_ }
-    # 	qw/grid_width grid_height item_width item_height gutter_h gutter_v border_l border_r border_t border_b/; 
 
     # first assign positions in terms of page coordinates
     my @grid = $self->sequence;
@@ -131,6 +125,30 @@ sub guides {
     }
     return @guides;
 }
+
+sub marks {
+    my $self = shift;
+    my $l = shift || 12;
+    my (@h_marks, @v_marks);
+    my ($h, $w, $ih, $iw) = map { $self->$_ } qw/page_height page_width item_height item_width/;
+
+    for (0..$self->grid_width-1) {
+	my $p = [ $self->position($_, 0) ]->[0];
+	push @v_marks, [ [ $p, 0 ], [ $p, -$l ] ];
+	push @v_marks, [ [ $p + $iw, 0 ], [ $p + $iw, -$l ] ];
+	push @v_marks, [ [ $p, $h ], [ $p, $h + $l ] ];
+	push @v_marks, [ [ $p + $iw, $h ], [ $p + $iw, $h + $l ] ];
+    }
+    for (0..$self->grid_height-1) {
+	my $p = [ $self->position(0, $_) ]->[1];
+	push @h_marks, [ [ -$l, $p ], [ 0, $p ] ];
+	push @h_marks, [ [ -$l, $p + $ih ], [ 0, $p + $ih ] ];
+	push @h_marks, [ [ $w, $p ], [ $w + $l, $p ] ];
+	push @h_marks, [ [ $w, $p + $ih ], [ $w + $l, $p + $ih ] ];
+    }
+    return (@v_marks, @h_marks);
+}
+
 
 sub calculate {
     my $self = shift;
@@ -249,17 +267,27 @@ The total height of the grid
 
 The total width of the grid
 
+=head2 calculate
+
+ $grid->calculate();
+
+Calculates item width and height based on page size, borders, gutters and item count
+
+=head2 guides
+
+ $grid->guides();
+
+Returns start and end coordinates of layout guides
+
+=head2 marks
+
+ $grid->marks();
+
+Returns start and end coordinates of layout marks (short lines outside page)
+
 =head1 To do
 
 =over 4
-
-=item *
-
-Allow for different vertical and horizontal gutters 
-
-=item *
-
-Allow for different top, bottom, left right borders
 
 =item *
 
