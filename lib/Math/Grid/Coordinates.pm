@@ -3,10 +3,6 @@ package Math::Grid::Coordinates;
 use Moose;
 use Moose::Util::TypeConstraints;
 
-use List::AllUtils qw/max/;
-use POSIX qw/ceil/;
-
-# number of items
 has [ qw/grid_width grid_height page_width page_height/ ] => ( is => 'rw', isa => 'Int' );
 
 has [ qw/page_width page_height/ ] => ( is => 'rw', isa => 'Num' );
@@ -17,10 +13,8 @@ has [ qw/item_width item_height/ ] => ( is => 'rw', isa => 'Num' );
 # gutter border
 has [ qw/gutter gutter_h gutter_v border border_l border_r border_t border_b/ ] => ( is => 'rw', isa => 'Num' );
 
-subtype 'Seq', as 'Str', where { /[h,v]/i };
-has arrange => ( is => 'rw', isa => 'Seq', default => sub { 'h' } );
-
-# has item_sizes => ( is => 'rw', isa => 'ArrayRef[ArrayRef[Num]]' );
+subtype 'Seq', as 'Str', where { /^[h,v]$/i };
+has arrange => ( is => 'rw', isa => 'Str', default => sub { 'h' } );
 
 
 around BUILDARGS => sub {
@@ -108,6 +102,25 @@ sub positions {
     return @pos;
 }
 
+sub block {
+    my $self = shift;
+    my ($x, $y, $w, $h) = @_;
+
+    my ($iw, $ih, $gt_h, $gt_v, $bl, $bt) = map { $self->$_ } qw/item_width item_height gutter_h gutter_v border_l border_t/; 
+
+    my ($x_pos, $y_pos) = (
+			   $bl + $iw * $x + $gt_h * $x,
+			   $bt + $ih * $y + $gt_v * $y,
+			  );
+
+    my ($width, $height) = (
+			   $iw * $w + $gt_h * ($w - 1),
+			   $ih * $h + $gt_v * ($h - 1),
+			   );
+
+    return ($x_pos, $y_pos, $width, $height)
+}
+
 sub guides {
     my $self = shift;
     my @guides;
@@ -192,14 +205,9 @@ Grid creates an array of x-y positions for items of a given height and width arr
 
 =head1 REQUIRES
 
-L<POSIX> 
-
-L<List::AllUtils> 
-
-L<Moose::Util::TypeConstraints> 
-
 L<Moose> 
 
+L<Moose::Util::TypeConstraints> 
 
 =head1 METHODS
 
@@ -248,6 +256,18 @@ Returns the sequence of x-y grid item coordinates, with the top left item as ite
  | [2, 0]  | [2, 1]  | [2, 2]  | [2, 3]  |
  |         |         |         |         |
  +---------+---------+---------+---------+
+
+=head2 position
+
+ $grid->position(0, 0);
+
+Returns the position of item as an array of x and y coordinates.
+
+=head2 block
+
+ $grid->block($x, $y, $width, $height);
+
+Returns the position and size of item as an array of x and y coordinates, and width and height.
 
 =head2 positions
 
