@@ -14,13 +14,9 @@ Grid creates an array of x-y positions for items of a given height and width arr
 
 # REQUIRES
 
-[POSIX](https://metacpan.org/pod/POSIX) 
-
-[List::AllUtils](https://metacpan.org/pod/List%3A%3AAllUtils) 
+[Moose](https://metacpan.org/pod/Moose) 
 
 [Moose::Util::TypeConstraints](https://metacpan.org/pod/Moose%3A%3AUtil%3A%3ATypeConstraints) 
-
-[Moose](https://metacpan.org/pod/Moose) 
 
 # METHODS
 
@@ -70,6 +66,18 @@ Returns the sequence of x-y grid item coordinates, with the top left item as ite
     |         |         |         |         |
     +---------+---------+---------+---------+
 
+## position
+
+    $grid->position(0, 0);
+
+Returns the position of item as an array of x and y coordinates.
+
+## block
+
+    $grid->block($x, $y, $width, $height);
+
+Returns the position and size of item as an array of x and y coordinates, and width and height.
+
 ## positions
 
     $grid->positions();
@@ -99,6 +107,12 @@ Calculates item width and height based on page size, borders, gutters and item c
     $grid->guides();
 
 Returns start and end coordinates of layout guides
+
+## marks
+
+    $grid->marks();
+
+Returns start and end coordinates of layout marks (short lines outside page)
 
 # To do
 
